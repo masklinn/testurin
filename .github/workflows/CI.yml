@@ -43,6 +43,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      - run: python -mpip install -U pip
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - uses: PyO3/maturin-action@v1
         with:
