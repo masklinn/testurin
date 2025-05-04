@@ -11,6 +11,7 @@ jobs:
   tests:
     runs-on: ${{ matrix.runner }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - runner: ubuntu-24.04
@@ -25,5 +26,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - run: python -mpip install tox
-      - run: python -m tox
+      - uses: PyO3/maturin-action@v1
+        with:
+          args: --release --out dist
+          sccache: 'true'
+      - run: python -mpip install pytest
+      - run: python -mpip install --find-links dist testurin
+      - run: python -mpytest tests/
