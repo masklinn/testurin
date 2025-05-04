@@ -13,19 +13,36 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - runner: ubuntu-24.04
-          - runner: ubuntu-24.04-arm
-          - runner: macos-13
-          - runner: macos-latest
-          - runner: windows-latest
+        python-version:
+          - "3.x"
+          - "pypy-3.10"
+          - "pypy-3.11"
+          - "graalpy24"
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+          - macos-13
+          - macos-latest
+          - windows-latest
+          - windows-11-arm
+        exclude:
+          # pypy/windows/arm doesn't seem to be a thing
           - runner: windows-11-arm
+            python-version: pypy-3.10
+          - runner: windows-11-arm
+            python-version: pypy-3.11
+          # https://github.com/oracle/graal/issues/9215
+          - runner: windows-11-arm
+            python-version: graalpy24
+          # https://github.com/actions/setup-python/pull/880
+          - runner: windows-latest
+            python-version: graalpy24
 
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          python-version: ${{ matrix.python-version }}
       - uses: PyO3/maturin-action@v1
         with:
           args: --release --out dist
